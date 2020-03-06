@@ -1,14 +1,81 @@
 const Tour = require('../models/Tour');
 
+class APIFeatures {
+  constructor(query, queryString) {
+    this.query = query;
+    this.queryString = queryString;
+  }
+
+  filterQuery() {
+    let queryObj = { ...this.queryString };
+
+    const excludedFilterKeys = ['sort', 'fields', 'page', 'limit'];
+    excludedFilterKeys.forEach(el => {
+      delete this.queryObj[el];
+    });
+
+    this.queryString = JSON.stringify(this.queryObj);
+
+    this.queryString = this.queryString.replace(/(lt|gte|lte|gt)/g, match => {
+      // do something with the match
+      // return a different string
+      return `$${match}`;
+    });
+
+    this.query = Tour.find(JSON.parse(this.queryString));
+  }
+
+  sortQuery() {
+    if (this.queryString.sort) {
+      const sortBy = this.queryString.sort.split(',').join(' ');
+      this.query = this.query.sort(sortBy);
+    } else {
+      this.query = this.query.sort('-createdAt');
+    }
+
+    return this;
+  }
+
+  limitFieldsQuery() {
+    if (this.queryString.fields) {
+      const fieldsLimit = this.queryString.fields.split(',').join(' ');
+      this.query = this.query.select(fieldsLimit);
+    } else {
+      this.query = this.query.select('-__v');
+    }
+
+    return this;
+  }
+
+  async paginateQuery() {
+    const page = this.queryString.page * 1 || 1;
+    const limit = this.queryString.limit * 1 || 2;
+    const skip = (page - 1) * limit;
+
+    const toursNum = await Tour.countDocuments();
+
+    if (this.queryString.page) {
+      if (skip >= toursNum)
+        throw {
+          message: 'page not exist'
+        };
+    }
+
+    this.query = this.query.skip(skip).limit(limit);
+
+    return this;
+  }
+}
+
 exports.checkID = (req, res, next, val) => {
   //  console.log(`requested id is ${val}`);
   next();
 };
 
 exports.aliasFiveTopTours = (req, res, next) => {
-  req.query.limit = '5';
-  req.query.sort = '-ratingAverage,price';
-  req.query.fields = 'name,price,ratingAverage,ratingQuantity';
+  req.this.query.limit = '5';
+  req.this.query.sort = '-ratingAverage,price';
+  req.this.query.fields = 'name,price,ratingAverage,ratingQuantity';
   next();
 };
 
@@ -17,57 +84,7 @@ exports.aliasFiveTopTours = (req, res, next) => {
 //                          ?page=2&limit=3
 exports.getAllTours = async (req, res) => {
   try {
-    let queryObj = { ...req.query };
-
-    const excludedFilterKeys = ['sort', 'fields', 'page', 'limit'];
-    excludedFilterKeys.forEach(el => {
-      delete queryObj[el];
-    });
-
-    let queryString = JSON.stringify(queryObj);
-
-    // using $lt, $gte in mongoose query
-    queryString = queryString.replace(/(lt|gte|lte|gt)/g, match => {
-      // do something with the match
-      // return a different string
-      return `$${match}`;
-    });
-
-    let query = Tour.find(JSON.parse(queryString));
-
-    // sort query
-    if (req.query.sort) {
-      const sortBy = req.query.sort.split(',').join(' ');
-      query = query.sort(sortBy);
-    } else {
-      query = query.sort('-createdAt');
-    }
-
-    // limit field query
-    if (req.query.fields) {
-      const fieldsLimit = req.query.fields.split(',').join(' ');
-      query = query.select(fieldsLimit);
-    } else {
-      query = query.select('-__v');
-    }
-
-    // page and limit query
-    const page = req.query.page * 1 || 1;
-    const limit = req.query.limit * 1 || 2;
-    const skip = (page - 1) * limit;
-
-    const toursNum = await Tour.countDocuments();
-
-    if (req.query.page) {
-      if (skip >= toursNum)
-        throw {
-          message: 'page not exist'
-        };
-    }
-
-    query = query.skip(skip).limit(limit);
-
-    const tours = await query;
+    const tours = await this.query;
 
     res.json({
       status: 'success',

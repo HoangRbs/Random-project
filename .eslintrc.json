@@ -18,6 +18,7 @@
     "no-console": "warn",
     "no-undef": "warn",
     "prefer-const": "off",
-    "no-throw-literal": "off"
+    "no-throw-literal": "off",
+    "class-methods-use-this": "off"
   }
 }
