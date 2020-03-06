@@ -7,22 +7,26 @@ class APIFeatures {
   }
 
   filterQuery() {
+    // filter by price
     let queryObj = { ...this.queryString };
 
     const excludedFilterKeys = ['sort', 'fields', 'page', 'limit'];
     excludedFilterKeys.forEach(el => {
-      delete this.queryObj[el];
+      delete queryObj[el];
     });
 
-    this.queryString = JSON.stringify(this.queryObj);
+    let tmp_queryStr = JSON.stringify(queryObj);
 
-    this.queryString = this.queryString.replace(/(lt|gte|lte|gt)/g, match => {
+    // change to $lt to match mongoose rules
+    tmp_queryStr = tmp_queryStr.replace(/(lt|gte|lte|gt)/g, match => {
       // do something with the match
       // return a different string
       return `$${match}`;
     });
 
-    this.query = Tour.find(JSON.parse(this.queryString));
+    this.query = Tour.find(JSON.parse(tmp_queryStr));
+
+    return this;
   }
 
   sortQuery() {
@@ -73,9 +77,9 @@ exports.checkID = (req, res, next, val) => {
 };
 
 exports.aliasFiveTopTours = (req, res, next) => {
-  req.this.query.limit = '5';
-  req.this.query.sort = '-ratingAverage,price';
-  req.this.query.fields = 'name,price,ratingAverage,ratingQuantity';
+  req.query.limit = '5';
+  req.query.sort = '-ratingAverage,price';
+  req.query.fields = 'name,price,ratingAverage,ratingQuantity';
   next();
 };
 
@@ -84,7 +88,13 @@ exports.aliasFiveTopTours = (req, res, next) => {
 //                          ?page=2&limit=3
 exports.getAllTours = async (req, res) => {
   try {
-    const tours = await this.query;
+    const features = await new APIFeatures(Tour.find(), req.query)
+      .filterQuery()
+      .sortQuery()
+      .limitFieldsQuery()
+      .paginateQuery();
+
+    const tours = await features.query;
 
     res.json({
       status: 'success',
@@ -92,6 +102,8 @@ exports.getAllTours = async (req, res) => {
       tours
     });
   } catch (err) {
+    console.log(err);
+
     res.status(500).json({
       error: err
     });

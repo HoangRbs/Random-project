@@ -19,6 +19,7 @@
     "no-undef": "warn",
     "prefer-const": "off",
     "no-throw-literal": "off",
-    "class-methods-use-this": "off"
+    "class-methods-use-this": "off",
+    "camelcase": "off"
   }
 }
