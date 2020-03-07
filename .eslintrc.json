@@ -20,6 +20,7 @@
     "prefer-const": "off",
     "no-throw-literal": "off",
     "class-methods-use-this": "off",
-    "camelcase": "off"
+    "camelcase": "off",
+    "func-names": "off"
   }
 }

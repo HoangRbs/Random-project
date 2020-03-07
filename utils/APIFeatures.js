@@ -7,7 +7,8 @@ class APIFeatures {
   }
 
   filterQuery() {
-    // filter by price
+    //  get localhost:3001/tours?rating=0
+    //  get localhost:3001/tours?price[lt]=1000
     let queryObj = { ...this.queryString };
 
     const excludedFilterKeys = ['sort', 'fields', 'page', 'limit'];
@@ -17,7 +18,7 @@ class APIFeatures {
 
     let tmp_queryStr = JSON.stringify(queryObj);
 
-    // change to $lt to match mongoose rules
+    //  change to $lt to match mongoose rules
     tmp_queryStr = tmp_queryStr.replace(/(lt|gte|lte|gt)/g, match => {
       // do something with the match
       // return a different string
@@ -30,6 +31,7 @@ class APIFeatures {
   }
 
   sortQuery() {
+    // get localhost:3001/tours?sort=-price
     if (this.queryString.sort) {
       const sortBy = this.queryString.sort.split(',').join(' ');
       this.query = this.query.sort(sortBy);
@@ -41,6 +43,7 @@ class APIFeatures {
   }
 
   limitFieldsQuery() {
+    //  get localhost:3001/tours?fields=name,price
     if (this.queryString.fields) {
       const fieldsLimit = this.queryString.fields.split(',').join(' ');
       this.query = this.query.select(fieldsLimit);
@@ -52,8 +55,9 @@ class APIFeatures {
   }
 
   async paginateQuery() {
+    //  get localhost:3001/tours?page=2&limit=3
     const page = this.queryString.page * 1 || 1;
-    const limit = this.queryString.limit * 1 || 2;
+    const limit = this.queryString.limit * 1 || 5;
     const skip = (page - 1) * limit;
 
     const toursNum = await Tour.countDocuments();

@@ -6,6 +6,56 @@ exports.checkID = (req, res, next, val) => {
   next();
 };
 
+exports.getTourStat = async (req, res) => {
+  try {
+    const stats = await Tour.aggregate([
+      {
+        $match: {
+          ratingAverage: {
+            $gte: 4
+          }
+        }
+      },
+      {
+        $group: {
+          _id: '$ratingAverage',
+          tours_num: {
+            $sum: 1
+          },
+          sum_ofRating: {
+            $sum: '$ratingAverage'
+          },
+          sum_ofPrice: {
+            $sum: '$price'
+          },
+          min_rate: {
+            $min: '$ratingAverage'
+          },
+          max_rate: {
+            $max: '$ratingAverage'
+          },
+          tours_name: {
+            $push: '$name'
+          }
+        }
+      },
+      {
+        $sort: {
+          sum_ofPrice: 1
+        }
+      }
+    ]);
+
+    res.json(stats);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      status: 'failed',
+      error: err
+    });
+  }
+};
+
 exports.aliasFiveTopTours = (req, res, next) => {
   req.query.limit = '5';
   req.query.sort = '-ratingAverage,price';
@@ -13,9 +63,6 @@ exports.aliasFiveTopTours = (req, res, next) => {
   next();
 };
 
-//  get localhost:3001/tours?rating=0
-//  get localhost:3001/tours?price[lt]=1000&sort=-price,ratingAverage&fields=name,price
-//                          ?page=2&limit=3
 exports.getAllTours = async (req, res) => {
   try {
     const features = await new APIFeatures(Tour.find(), req.query)
