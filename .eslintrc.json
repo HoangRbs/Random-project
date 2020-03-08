@@ -21,6 +21,7 @@
     "no-throw-literal": "off",
     "class-methods-use-this": "off",
     "camelcase": "off",
-    "func-names": "off"
+    "func-names": "off",
+    "no-param-reassign": "off"
   }
 }
