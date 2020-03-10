@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const emailValidator = function(val) {
   return validator.isEmail(val);
@@ -39,13 +40,15 @@ const userSchema = new mongoose.Schema({
       },
       'passwords do not match'
     ]
-  }
+  },
+  passwordResetToken: String,
+  passwordResetExpired: Date
 });
 
 userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password')) return next(); // password = 12345
 
-  this.password = await bcrypt.hash(this.password, 8);
+  this.password = await bcrypt.hash(this.password, 8); // password = sfer2342r%%%$####
 
   // delete password confirm field
   this.confirmPassword = undefined;
@@ -59,6 +62,22 @@ userSchema.methods.comparePassword = async function(
 ) {
   const result = await bcrypt.compare(inputPassword, userPassword);
   return result;
+};
+
+userSchema.methods.createPasswordResetToken = async function() {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  this.passwordResetToken = await crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  this.passwordResetExpired = Date.now() + 10 * 60 * 1000; // last 10 mins
+
+  await this.save({
+    validateBeforeSave: false
+  });
+
+  return resetToken; // return a resolve value of a promise (async function)
 };
 
 const User = mongoose.model('user', userSchema);

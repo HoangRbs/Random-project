@@ -25,6 +25,7 @@
     "no-param-reassign": "off",
     "no-underscore-dangle": "off",
     "eqeqeq": "off",
-    "no-return-await": "off"
+    "no-return-await": "off",
+    "object-shorthand": "off"
   }
 }

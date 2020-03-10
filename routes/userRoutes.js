@@ -7,6 +7,10 @@ const userRouter = express.Router();
 // userRouter = "/api/users"
 userRouter.route('/SignUp').post(authControllers.userSignIn);
 userRouter.route('/Login').post(authControllers.userLogin);
+userRouter.route('/forgotPassword').post(userControllers.forgotPassword);
+userRouter
+  .route('/resetPassword/:resetToken')
+  .patch(userControllers.resetPassword);
 
 userRouter.route('/').get(userControllers.getAllUser);
 
