@@ -11,19 +11,6 @@ exports.getAllUser = catchAsync(async (req, res) => {
   });
 });
 
-// exports.createUser = catchAsync(async (req, res) => {
-//   let user = await new User(req.body);
-//   user = await user.save();
-
-//   const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY);
-
-//   res.json({
-//     status: 'success',
-//     token,
-//     user
-//   });
-// });
-
 exports.getUser = catchAsync(async (req, res) => {});
 
 exports.updateUser = catchAsync((req, res) => {

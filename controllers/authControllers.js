@@ -18,7 +18,7 @@ exports.userLogin = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email }).select('+password');
 
   if (!user || !(await user.comparePassword(password, user.password))) {
-    return next(new AppError('wrong email or password', 404));
+    throw new AppError('please provide a token', 401);
   }
 
   const token = await this.generateToken(user._id);
@@ -41,3 +41,36 @@ exports.userSignIn = catchAsync(async (req, res, next) => {
     user
   });
 });
+
+// authen, authorize
+exports.auth_protect = catchAsync(async (req, res, next) => {
+  const token = req.header('Authorization');
+
+  if (!token) return next(new AppError('please provide a token', 401));
+
+  const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+  const currentUser = await User.findById(decoded.id);
+
+  if (!currentUser) {
+    throw new AppError('user not exist', 404);
+  }
+
+  // grant access
+  req.user = currentUser;
+  next();
+});
+
+exports.auth_allow = (...roles) => {
+  return catchAsync(async (req, res, next) => {
+    // roles == ['super_user','admin']    user.role == 'user'(from auth_protect)
+    if (!roles.includes(req.user.role)) {
+      throw new AppError(
+        'you do not have permission to perform this action',
+        401
+      );
+    }
+
+    next();
+  });
+};
