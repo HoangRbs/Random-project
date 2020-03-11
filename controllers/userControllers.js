@@ -96,3 +96,24 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     message: 'password has changed'
   });
 });
+
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.user._id).select('+password');
+  const { currentPassword, newPassword, confirmNewPassword } = req.body;
+
+  if (!currentPassword)
+    throw new AppError('please type your current password', 404);
+
+  if (!(await user.comparePassword(currentPassword, user.password)))
+    throw new AppError('current password not correct', 404);
+
+  user.password = newPassword;
+  user.confirmPassword = confirmNewPassword;
+
+  await user.save();
+
+  res.json({
+    status: 'success',
+    message: 'password has been changed'
+  });
+});

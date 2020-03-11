@@ -12,6 +12,10 @@ userRouter
   .route('/resetPassword/:resetToken')
   .patch(userControllers.resetPassword);
 
+userRouter
+  .route('/updatePassword')
+  .patch(authControllers.auth_protect, userControllers.updatePassword);
+
 userRouter.route('/').get(userControllers.getAllUser);
 
 userRouter

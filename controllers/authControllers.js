@@ -18,7 +18,7 @@ exports.userLogin = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email }).select('+password');
 
   if (!user || !(await user.comparePassword(password, user.password))) {
-    throw new AppError('please provide a token', 401);
+    throw new AppError('wrong password', 401);
   }
 
   const token = await this.generateToken(user._id);
@@ -49,6 +49,8 @@ exports.auth_protect = catchAsync(async (req, res, next) => {
   if (!token) return next(new AppError('please provide a token', 401));
 
   const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+  if (!decoded) throw new AppError('invalid token', 404);
 
   const currentUser = await User.findById(decoded.id);
 
