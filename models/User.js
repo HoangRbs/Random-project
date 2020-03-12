@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
   photo: String,
   role: {
     type: String,
-    enum: ['user', 'super_user', 'admin'],
+    enum: ['user', 'guide', 'admin'],
     default: 'user'
   },
   password: {
@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
   },
   confirmPassword: {
     type: String,
-    required: [true, 'please comfirm your password'],
+    required: [true, 'please comfirm your password'], // only works on save()
     validate: [
       function(val) {
         return this.password === val;

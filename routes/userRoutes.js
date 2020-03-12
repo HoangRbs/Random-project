@@ -5,6 +5,7 @@ const authControllers = require('../controllers/authControllers');
 const userRouter = express.Router();
 
 // userRouter = "/api/users"
+userRouter.route('/').get(userControllers.getAllUser);
 userRouter.route('/SignUp').post(authControllers.userSignIn);
 userRouter.route('/Login').post(authControllers.userLogin);
 userRouter.route('/forgotPassword').post(userControllers.forgotPassword);
@@ -12,11 +13,9 @@ userRouter
   .route('/resetPassword/:resetToken')
   .patch(userControllers.resetPassword);
 
-userRouter
-  .route('/updatePassword')
-  .patch(authControllers.auth_protect, userControllers.updatePassword);
+userRouter.use(authControllers.auth_protect); // user auth_ptotect for the reset of the below routes
 
-userRouter.route('/').get(userControllers.getAllUser);
+userRouter.route('/updatePassword').patch(userControllers.updatePassword);
 
 userRouter
   .route('/:id')

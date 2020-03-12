@@ -4,7 +4,8 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/AppError');
 
 exports.generateToken = async userId => {
-  return await jwt.sign({ id: userId }, process.env.JWT_SECRET_KEY);
+  const token = await jwt.sign({ id: userId }, process.env.JWT_SECRET_KEY);
+  return token;
 };
 
 exports.userLogin = catchAsync(async (req, res, next) => {
@@ -22,6 +23,16 @@ exports.userLogin = catchAsync(async (req, res, next) => {
   }
 
   const token = await this.generateToken(user._id);
+
+  // saving token inside cookie
+  const cookieOption = {
+    expires: new Date(
+      Date.now() + process.env.COOKIE_TOKEN_EXPIRE * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true, // user http
+    secure: process.env.NODE_ENV === 'production' // use https
+  };
+  res.cookie('token', token, cookieOption);
 
   res.json({
     status: 'success',
@@ -65,7 +76,8 @@ exports.auth_protect = catchAsync(async (req, res, next) => {
 
 exports.auth_allow = (...roles) => {
   return catchAsync(async (req, res, next) => {
-    // roles == ['super_user','admin']    user.role == 'user'(from auth_protect)
+    // roles == ['super_user','admin']    req.user.role == 'user'(from auth_protect)
+    // have to execute after auth_protect to get REQ.USER
     if (!roles.includes(req.user.role)) {
       throw new AppError(
         'you do not have permission to perform this action',
