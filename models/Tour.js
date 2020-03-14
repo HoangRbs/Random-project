@@ -94,6 +94,8 @@ TourSchema.pre(/find/, function(next) {
   next();
 });
 
+TourSchema.index({ price: 1, ratingAverage: -1 });
+
 // TourSchema.pre('save', async function(next) {
 //   // return an async == return a Promise -> await an async == value
 //   // return async array == return Promises array -> await promise array == value array
