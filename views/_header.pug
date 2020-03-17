@@ -1,0 +1,25 @@
+header
+  nav.navbar.navbar-expand-lg
+    .container
+      a.navbar-brand(href='index.html')
+        h2
+          | random
+          em project
+      button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarResponsive' aria-controls='navbarResponsive' aria-expanded='false' aria-label='Toggle navigation')
+        span.navbar-toggler-icon
+      #navbarResponsive.collapse.navbar-collapse
+        ul.navbar-nav.ml-auto
+          li.nav-item.active
+            a.nav-link(href='index.html')
+              | Home
+              span.sr-only (current)
+          li.nav-item
+            // include this
+            a.nav-link(href='products.html') Our Products
+            // include this 
+          li.nav-item
+            // include this
+            a.nav-link(href='about.html') About Us
+          li.nav-item
+            // include this
+            a.nav-link(href='contact.html') Contact Us
