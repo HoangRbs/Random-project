@@ -1,5 +1,24 @@
 extends index
 
 block content
-  h1 over view content
+  .latest-products
+  .container
+    .row
+      .col-md-12
+        .section-heading
+          h2 Latest Products
+      for tour in tours
+        .col-md-4
+          .product-item
+            a(href='#')
+              img(src=`assets/images/tours/${tour.imageCover}` alt='')
+            .down-content
+              a(href='#')
+                h4=tour.name
+              h6='$' + tour.price
+              p=tour.description.toString().substring(0,200)+'...'
+              ul
+                li='rating: '+tour.ratingAverage.toFixed(2)
+              span='ratingNum:('+tour.ratingQuantity+')'
+
 
