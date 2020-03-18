@@ -10,7 +10,7 @@ block content
       for tour in tours
         .col-md-4
           .product-item
-            a(href='#')
+            a(href=`/tour/${tour.name.toString()}`)
               img(src=`assets/images/tours/${tour.imageCover}` alt='')
             .down-content
               a(href='#')

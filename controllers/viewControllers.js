@@ -10,8 +10,12 @@ exports.getOverview = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getTour = catchAsync((req, res, next) => {
+exports.getTour = catchAsync(async (req, res, next) => {
+  const tour = await Tour.findOne({ name: req.params.tourName }).populate(
+    'reviews'
+  );
+
   res.render('tour', {
-    title: 'detailed tour info'
+    tour
   });
 });
