@@ -1,7 +1,7 @@
 header
   nav.navbar.navbar-expand-lg
     .container
-      a.navbar-brand(href='index.html')
+      a.navbar-brand(href='/')
         h2
           | random
           em project
@@ -10,16 +10,12 @@ header
       #navbarResponsive.collapse.navbar-collapse
         ul.navbar-nav.ml-auto
           li.nav-item.active
-            a.nav-link(href='index.html')
+            a.nav-link(href='/')
               | Home
               span.sr-only (current)
           li.nav-item
             // include this
-            a.nav-link(href='products.html') Our Products
-            // include this 
+            a.nav-link(href='/login') Login
           li.nav-item
             // include this
-            a.nav-link(href='about.html') About Us
-          li.nav-item
-            // include this
-            a.nav-link(href='contact.html') Contact Us
+            a.nav-link(href='/signUp') SignUp
