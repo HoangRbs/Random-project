@@ -27,17 +27,17 @@ head
         //-   span
         //-     i.fab.fa-twitter-square
       .card-body
-        form
+        form(id='form_login')
           .input-group.form-group
             .input-group-prepend
               span.input-group-text
                 i.fas.fa-user
-            input.form-control(type='text' placeholder='email')
+            input.form-control(id= 'input_login_email' type='text' placeholder='email')
           .input-group.form-group
             .input-group-prepend
               span.input-group-text
                 i.fas.fa-key
-            input.form-control(type='password' placeholder='password')
+            input.form-control(id= 'input_login_password' type='password' placeholder='password')
           .row.align-items-center.remember
             input(type='checkbox')
             | Remember Me
@@ -49,3 +49,6 @@ head
           a(href='#') Sign Up
         .d-flex.justify-content-center
           a(href='#') Forgot your password?
+
+script(src="/js/login.js")
+script(src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js")

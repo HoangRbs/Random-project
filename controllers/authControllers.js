@@ -12,14 +12,14 @@ exports.userLogin = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    const err = new AppError('please provide email or password', 404);
+    const err = new AppError('please provide email or password', 400);
     return next(err);
   }
 
   const user = await User.findOne({ email }).select('+password');
 
   if (!user || !(await user.comparePassword(password, user.password))) {
-    throw new AppError('wrong password', 401);
+    throw new AppError('wrong password or wrong email', 400);
   }
 
   const token = await this.generateToken(user._id);
@@ -55,7 +55,10 @@ exports.userSignIn = catchAsync(async (req, res, next) => {
 
 // authen, authorize
 exports.auth_protect = catchAsync(async (req, res, next) => {
-  const token = req.header('Authorization');
+  let token = null;
+
+  if (req.header('Authorization')) token = req.header('Authorization');
+  else if (req.cookies) token = req.cookies.token;
 
   if (!token) return next(new AppError('please provide a token', 401));
 
@@ -71,6 +74,27 @@ exports.auth_protect = catchAsync(async (req, res, next) => {
 
   // grant access
   req.user = currentUser;
+  next();
+});
+
+// for client side, no logging error, just for views rendering
+exports.isLoggedIn = catchAsync(async (req, res, next) => {
+  if (req.cookies.token) {
+    const decoded = jwt.verify(req.cookies.token, process.env.JWT_SECRET_KEY);
+
+    if (!decoded) return next();
+
+    const currentUser = await User.findById(decoded.id);
+
+    if (!currentUser) {
+      return next();
+    }
+
+    // grant access for all views (template)
+    res.locals.user = currentUser;
+    return next();
+  }
+
   next();
 });
 
