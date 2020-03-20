@@ -40,6 +40,17 @@ exports.userLogin = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.userLogout = (req, res) => {
+  res.cookie('token', 'userLogout', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true
+  });
+
+  res.status(200).json({
+    status: 'success'
+  });
+};
+
 exports.userSignIn = catchAsync(async (req, res, next) => {
   let user = await new User(req.body);
   user = await user.save();
@@ -78,25 +89,29 @@ exports.auth_protect = catchAsync(async (req, res, next) => {
 });
 
 // for client side, no logging error, just for views rendering
-exports.isLoggedIn = catchAsync(async (req, res, next) => {
+exports.isLoggedIn = async (req, res, next) => {
   if (req.cookies.token) {
-    const decoded = jwt.verify(req.cookies.token, process.env.JWT_SECRET_KEY);
+    try {
+      const decoded = jwt.verify(req.cookies.token, process.env.JWT_SECRET_KEY);
 
-    if (!decoded) return next();
+      if (!decoded) return next();
 
-    const currentUser = await User.findById(decoded.id);
+      const currentUser = await User.findById(decoded.id);
 
-    if (!currentUser) {
+      if (!currentUser) {
+        return next();
+      }
+
+      // grant access for all views (template)
+      res.locals.user = currentUser;
+      return next();
+    } catch (err) {
       return next();
     }
-
-    // grant access for all views (template)
-    res.locals.user = currentUser;
-    return next();
   }
 
   next();
-});
+};
 
 exports.auth_allow = (...roles) => {
   return catchAsync(async (req, res, next) => {

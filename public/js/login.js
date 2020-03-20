@@ -1,4 +1,8 @@
-const start_login = async (email, password) => {
+/*eslint-disable*/
+import 'babel-polyfill';
+import axios from 'axios';
+
+export const start_login = async (email, password) => {
   try {
     const res = await axios({
       method: 'post',
@@ -20,11 +24,15 @@ const start_login = async (email, password) => {
   }
 };
 
-document.getElementById('form_login').addEventListener('submit', e => {
-  e.preventDefault();
+export const start_logout = async () => {
+  try {
+    const res = await axios({
+      method: 'get',
+      url: 'http://localhost:3001/api/users/Logout'
+    });
 
-  const email = document.getElementById('input_login_email').value;
-  const password = document.getElementById('input_login_password').value;
-
-  start_login(email, password);
-});
+    if (res.data.status === 'success') location.reload(true);
+  } catch (err) {
+    window.alert('err logging out');
+  }
+};
