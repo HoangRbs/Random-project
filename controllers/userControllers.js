@@ -3,7 +3,8 @@ const nodemailer = require('nodemailer');
 const catchAsync = require('../utils/catchAsync');
 const User = require('../models/User');
 const AppError = require('../utils/AppError');
-const { sendEmail } = require('../utils/email');
+// const { sendEmail } = require('../utils/email');
+const Email = require('../utils/email');
 
 exports.getAllUser = catchAsync(async (req, res) => {
   const users = await User.find();
@@ -43,15 +44,15 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     'host'
   )}/api/users/resetPassword/${resetToken}`;
 
-  const message = `click the link to reset yout password ${resetURL}`;
+  // const message = `click the link to reset yout password ${resetURL}`;
 
   try {
-    sendEmail({
-      receiverMail: user.email,
-      subject:
-        'this is your link to reset your password (take effect in 10 mins)',
-      message: message
-    });
+    // sendEmail({
+    //   receiverMail: user.email,
+    //   subject:
+    //     'this is your link to reset your password (take effect in 10 mins)',
+    //   message: message
+    // });
 
     res.json({
       status: 'success',

@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/AppError');
+const Email = require('../utils/email');
 
 exports.generateToken = async userId => {
   const token = await jwt.sign({ id: userId }, process.env.JWT_SECRET_KEY);
@@ -41,6 +42,7 @@ exports.userLogin = catchAsync(async (req, res, next) => {
 });
 
 exports.userLogout = (req, res) => {
+  // replace with some dummy token
   res.cookie('token', 'userLogout', {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true
@@ -51,16 +53,28 @@ exports.userLogout = (req, res) => {
   });
 };
 
-exports.userSignIn = catchAsync(async (req, res, next) => {
+// testing this only on postman
+exports.userSignUp = catchAsync(async (req, res, next) => {
   let user = await new User(req.body);
   user = await user.save();
 
-  const token = this.generateToken(user._id);
+  const token = await this.generateToken(user._id);
+
+  // saving token inside cookie
+  const cookieOption = {
+    expires: new Date(
+      Date.now() + process.env.COOKIE_TOKEN_EXPIRE * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true, // user http
+    secure: process.env.NODE_ENV === 'production' // use https
+  };
+  res.cookie('token', token, cookieOption);
+
+  const url = `${req.protocol}://${req.get('host')}`;
+  new Email(user, url).sendWelcome(); // send welcome mail to new user
 
   res.json({
-    status: 'success',
-    token,
-    user
+    status: 'success'
   });
 });
 

@@ -9986,25 +9986,97 @@ var start_logout = /*#__PURE__*/function () {
 }();
 
 exports.start_logout = start_logout;
-},{"babel-polyfill":"../../node_modules/babel-polyfill/lib/index.js","axios":"../../node_modules/axios/index.js"}],"index.js":[function(require,module,exports) {
+},{"babel-polyfill":"../../node_modules/babel-polyfill/lib/index.js","axios":"../../node_modules/axios/index.js"}],"SignUp.js":[function(require,module,exports) {
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+var axios = require('axios');
+
+exports.start_signUp = /*#__PURE__*/function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(name, email, password, confirmPassword) {
+    var res;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.prev = 0;
+            _context.next = 3;
+            return axios({
+              method: 'post',
+              url: 'http://localhost:3001/api/users/SignUp',
+              data: {
+                name: name,
+                email: email,
+                password: password,
+                confirmPassword: confirmPassword
+              }
+            });
+
+          case 3:
+            res = _context.sent;
+
+            if (res.data.status === 'success') {
+              window.alert('Sign Up successfully');
+              window.setTimeout(function () {
+                window.location.assign('/');
+              }, 500);
+            }
+
+            _context.next = 10;
+            break;
+
+          case 7:
+            _context.prev = 7;
+            _context.t0 = _context["catch"](0);
+            window.alert(_context.t0.response.data.message);
+
+          case 10:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, null, [[0, 7]]);
+  }));
+
+  return function (_x, _x2, _x3, _x4) {
+    return _ref.apply(this, arguments);
+  };
+}();
+},{"axios":"../../node_modules/axios/index.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _Login = require("./Login");
 
+var _SignUp = require("./SignUp");
+
 /*eslint-disable*/
 var form_login_el = document.getElementById('form_login');
 var logout_el = document.querySelector('.nav__el--logout');
+var form_signUp_el = document.getElementById('form_signUp');
 if (form_login_el) form_login_el.addEventListener('submit', function (e) {
   e.preventDefault();
   var email = document.getElementById('input_login_email').value;
   var password = document.getElementById('input_login_password').value;
   (0, _Login.start_login)(email, password);
 });
+
+if (form_signUp_el) {
+  form_signUp_el.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = document.getElementById('input_signUp_name').value;
+    var email = document.getElementById('input_signUp_email').value;
+    var password = document.getElementById('input_signUp_password').value;
+    var confirmPassword = document.getElementById('input_signUp_confirm_password').value;
+    (0, _SignUp.start_signUp)(name, email, password, confirmPassword);
+  });
+}
+
 if (logout_el) logout_el.addEventListener('click', function (e) {
   e.preventDefault();
   (0, _Login.start_logout)();
 });
-},{"./Login":"Login.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./Login":"Login.js","./SignUp":"SignUp.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -10032,7 +10104,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49334" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56681" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

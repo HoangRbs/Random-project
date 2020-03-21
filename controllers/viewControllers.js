@@ -23,3 +23,7 @@ exports.getTour = catchAsync(async (req, res, next) => {
 exports.Login = catchAsync(async (req, res, next) => {
   res.render('login');
 });
+
+exports.SignUp = catchAsync(async (req, res, next) => {
+  res.render('signup');
+});

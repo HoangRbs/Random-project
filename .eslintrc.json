@@ -27,6 +27,7 @@
     "eqeqeq": "off",
     "no-return-await": "off",
     "object-shorthand": "off",
-    "no-alert": "off"
+    "no-alert": "off",
+    "prefer-destructuring": "off"
   }
 }
