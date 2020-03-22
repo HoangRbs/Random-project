@@ -4,7 +4,7 @@ require('dotenv').config({
 const mongoose = require('mongoose');
 
 mongoose
-  .connect('mongodb://localhost/random-project', {
+  .connect(process.env.DATABASE_URL, {
     useNewUrlParser: true
   })
   .then(() => console.log('database connected'));
