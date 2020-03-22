@@ -1,4 +1,4 @@
-const axios = require('axios');
+import axios from 'axios';
 
 exports.start_signUp = async (name, email, password, confirmPassword) => {
   try {

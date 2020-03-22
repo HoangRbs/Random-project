@@ -7,6 +7,7 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const viewRouter = require('./routes/viewRoutes');
 const testRouter = require('./routes/testRoutes');
+const bookingRouter = require('./routes/bookingRoutes');
 const {
   NotFoundUrl,
   globalErrHandler
@@ -26,6 +27,7 @@ app.use(express.static(path.join(__dirname, 'public'))); // for serving css, js 
 app.use('/', viewRouter);
 app.use('/api/tours', tourRouter);
 app.use('/api/users', userRouter);
+app.use('/api/bookings', bookingRouter);
 
 app.use(NotFoundUrl);
 app.use(globalErrHandler);

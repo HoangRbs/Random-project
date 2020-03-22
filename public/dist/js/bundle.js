@@ -9886,8 +9886,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.start_logout = exports.start_login = void 0;
 
-require("babel-polyfill");
-
 var _axios = _interopRequireDefault(require("axios"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -9986,12 +9984,16 @@ var start_logout = /*#__PURE__*/function () {
 }();
 
 exports.start_logout = start_logout;
-},{"babel-polyfill":"../../node_modules/babel-polyfill/lib/index.js","axios":"../../node_modules/axios/index.js"}],"SignUp.js":[function(require,module,exports) {
+},{"axios":"../../node_modules/axios/index.js"}],"SignUp.js":[function(require,module,exports) {
+"use strict";
+
+var _axios = _interopRequireDefault(require("axios"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
-var axios = require('axios');
 
 exports.start_signUp = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(name, email, password, confirmPassword) {
@@ -10002,7 +10004,7 @@ exports.start_signUp = /*#__PURE__*/function () {
           case 0:
             _context.prev = 0;
             _context.next = 3;
-            return axios({
+            return (0, _axios.default)({
               method: 'post',
               url: 'http://localhost:3001/api/users/SignUp',
               data: {
@@ -10043,23 +10045,100 @@ exports.start_signUp = /*#__PURE__*/function () {
     return _ref.apply(this, arguments);
   };
 }();
+},{"axios":"../../node_modules/axios/index.js"}],"bookTour.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.bookTour = void 0;
+
+var _axios = _interopRequireDefault(require("axios"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+var stripe = Stripe('pk_test_imrdwxDpv4QY4FGEcLp3Um1b00XFsV2PAg');
+
+var bookTour = /*#__PURE__*/function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(tourId) {
+    var res, sessionId;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.prev = 0;
+            _context.next = 3;
+            return (0, _axios.default)("http://localhost:3001/api/bookings/checkout-session/".concat(tourId));
+
+          case 3:
+            res = _context.sent;
+            sessionId = res.data.session.id;
+            _context.next = 7;
+            return stripe.redirectToCheckout({
+              sessionId: sessionId
+            });
+
+          case 7:
+            _context.next = 13;
+            break;
+
+          case 9:
+            _context.prev = 9;
+            _context.t0 = _context["catch"](0);
+            console.log(_context.t0);
+            alert('err');
+
+          case 13:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, null, [[0, 9]]);
+  }));
+
+  return function bookTour(_x) {
+    return _ref.apply(this, arguments);
+  };
+}();
+
+exports.bookTour = bookTour;
 },{"axios":"../../node_modules/axios/index.js"}],"index.js":[function(require,module,exports) {
 "use strict";
+
+require("babel-polyfill");
 
 var _Login = require("./Login");
 
 var _SignUp = require("./SignUp");
 
+var _bookTour = require("./bookTour");
+
 /*eslint-disable*/
 var form_login_el = document.getElementById('form_login');
 var logout_el = document.querySelector('.nav__el--logout');
 var form_signUp_el = document.getElementById('form_signUp');
-if (form_login_el) form_login_el.addEventListener('submit', function (e) {
-  e.preventDefault();
-  var email = document.getElementById('input_login_email').value;
-  var password = document.getElementById('input_login_password').value;
-  (0, _Login.start_login)(email, password);
-});
+var bookBtn = document.getElementById('book-tour');
+
+if (bookBtn) {
+  bookBtn.addEventListener('click', function (e) {
+    e.target.textContent = '...processing';
+    var tourId = e.target.dataset.tourId;
+    (0, _bookTour.bookTour)(tourId);
+  });
+}
+
+if (form_login_el) {
+  form_login_el.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var email = document.getElementById('input_login_email').value;
+    var password = document.getElementById('input_login_password').value;
+    (0, _Login.start_login)(email, password);
+  });
+}
 
 if (form_signUp_el) {
   form_signUp_el.addEventListener('submit', function (e) {
@@ -10075,8 +10154,8 @@ if (form_signUp_el) {
 if (logout_el) logout_el.addEventListener('click', function (e) {
   e.preventDefault();
   (0, _Login.start_logout)();
-});
-},{"./Login":"Login.js","./SignUp":"SignUp.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+}); //};
+},{"babel-polyfill":"../../node_modules/babel-polyfill/lib/index.js","./Login":"Login.js","./SignUp":"SignUp.js","./bookTour":"bookTour.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -10104,7 +10183,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56681" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51769" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

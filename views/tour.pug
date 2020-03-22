@@ -217,7 +217,7 @@ section.section-cta
       h2.heading-secondary What are you waiting for?
       p.cta__text
         | 10 days. 1 adventure. Infinite memories. Make it yours today!
-      button.btn.btn--green.span-all-rows Book tour now!
+      button.btn.btn--green.span-all-rows(id='book-tour' data-tour-id=`${tour.id}`) Book tour now!
 .footer
   .footer__logo
     img(src='/img/logo-green.png' alt='Natours logo')
@@ -235,4 +235,5 @@ section.section-cta
   p.footer__copyright
     | &copy; by Jonas Schmedtmann. All rights reserved.
 
+script(src="https://js.stripe.com/v3/")
 script(src='/dist/js/bundle.js')

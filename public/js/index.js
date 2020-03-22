@@ -1,12 +1,23 @@
 /*eslint-disable*/
+import 'babel-polyfill';
 import { start_login, start_logout } from './Login';
 import { start_signUp } from './SignUp';
+import { bookTour } from './bookTour';
 
 const form_login_el = document.getElementById('form_login');
 const logout_el = document.querySelector('.nav__el--logout');
 const form_signUp_el = document.getElementById('form_signUp');
+const bookBtn = document.getElementById('book-tour');
 
-if (form_login_el)
+if (bookBtn) {
+  bookBtn.addEventListener('click', e => {
+    e.target.textContent = '...processing';
+    const { tourId } = e.target.dataset;
+    bookTour(tourId);
+  });
+}
+
+if (form_login_el) {
   form_login_el.addEventListener('submit', e => {
     e.preventDefault();
 
@@ -15,6 +26,7 @@ if (form_login_el)
 
     start_login(email, password);
   });
+}
 
 if (form_signUp_el) {
   form_signUp_el.addEventListener('submit', e => {
@@ -36,3 +48,4 @@ if (logout_el)
     e.preventDefault();
     start_logout();
   });
+//};

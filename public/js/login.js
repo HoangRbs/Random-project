@@ -1,5 +1,4 @@
 /*eslint-disable*/
-import 'babel-polyfill';
 import axios from 'axios';
 
 export const start_login = async (email, password) => {
