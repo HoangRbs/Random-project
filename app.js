@@ -2,11 +2,11 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const path = require('path');
+const compression = require('compression');
 const cookieParser = require('cookie-parser');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const viewRouter = require('./routes/viewRoutes');
-const testRouter = require('./routes/testRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
 const {
   NotFoundUrl,
@@ -15,6 +15,7 @@ const {
 
 const app = express();
 
+app.use(compression());
 app.use(cors());
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 app.use(express.json());
