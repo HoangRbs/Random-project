@@ -30,7 +30,7 @@
     "nodemailer": "^6.4.4",
     "pug": "^2.0.4",
     "stripe": "^8.33.0",
-    "validator": "^12.2.0"
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "eslint": "^6.1.0",
